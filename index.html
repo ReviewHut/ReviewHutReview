@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leave a Review</title>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-functions-compat.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background-color: #000000;
+      color: white;
+      line-height: 1.5;
+    }
+    
+    h2 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .header-image {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .header-image img {
+      max-width: 100px;
+      height: auto;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+    }
+    
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+    }
+
+    .star-rating-wrapper {
+      direction: ltr;
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .star-rating {
+      font-size: 2rem;
+      direction: rtl;
+      display: flex;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .star-rating input {
+      display: none;
+    }
+
+    .star-rating label {
+      color: lightgray;
+      transition: color 0.2s;
+    }
+
+    .star-rating input:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: gold;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    label.tag span {
+      background-color: transparent;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 20px;
+      border: 2px solid white;
+      transition: all 0.2s ease;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    /* Checked (selected) tag appearance for good tags */
+    input[name="goodTags"]:checked + span {
+      background-color: #0030D1; /* trustBlue */
+      color: white;
+      border: 2px solid #0030D1;
+    }
+
+    /* Checked (selected) tag appearance for bad tags */
+    input[name="badTags"]:checked + span {
+      background-color: #F10404; /* bottomCommentRed */
+      color: white;
+      border: 2px solid #F10404;
+    }
+
+    /* Hide native checkboxes */
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    .deal-type-options {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .deal-type-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .deal-type-label input {
+      margin-right: 8px;
+    }
+
+    button[type="submit"] {
+      background-color: #0030D1;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #002bb8;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-image">
+    <img src="logo.png" alt="Review Hut Logo" />
+  </div>
+
+  <h2>Leave a Review</h2>
+
+  <form id="review-form">
+    <div class="form-section">
+      <div class="section-title">Star Rating:</div>
+      <div class="star-rating-wrapper">
+        <div class="star-rating">
+          <input type="radio" id="star5" name="stars" value="5" required />
+          <label for="star5">&#9733;</label>
+          <input type="radio" id="star4" name="stars" value="4" />
+          <label for="star4">&#9733;</label>
+          <input type="radio" id="star3" name="stars" value="3" />
+          <label for="star3">&#9733;</label>
+          <input type="radio" id="star2" name="stars" value="2" />
+          <label for="star2">&#9733;</label>
+          <input type="radio" id="star1" name="stars" value="1" />
+          <label for="star1">&#9733;</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="section-title">Tag what they did well:</div>
+      <div class="tag-list">
+        <label class="tag"><input type="checkbox" name="goodTags" value="Fast Shipping" /><span>Fast Shipping</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Secure Packaging" /><span>Secure Packaging</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Responsive" /><span>Responsive</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Informative" /><span>Informative</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Free Returns" /><span>Free Returns</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Item as Described" /><span>Item as Described</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Great Communication" /><span>Great Communication</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Trustworthy" /><span>Trustworthy</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Fair Pricing" /><span>Fair Pricing</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Repeat Buyer/Seller" /><span>Repeat Buyer/Seller</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Accurate Photos" /><span>Accurate Photos</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Smooth Transaction" /><span>Smooth Transaction</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Excellent Condition" /><span>Excellent Condition</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Highly Recommended" /><span>Highly Recommended</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Quick Response" /><span>Quick Response</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Great Deals" /><span>Great Deals</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Easy to Work With" /><span>Easy to Work With</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="Flexible" /><span>Flexible</span></label>
+        <label class="tag"><input type="checkbox" name="goodTags" value="No Issues" /><span>No Issues</span></label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="section-title">Tag what they did not do well:</div>
+      <div class="tag-list">
+        <label class="tag"><input type="checkbox" name="badTags" value="Poor Communication" /><span>Poor Communication</span></label>
+        <label class="tag"><input type="checkbox" name="badTags" value="Misleading Description" /><span>Misleading Description</span></label>
+        <label class="tag"><input type="checkbox" name="badTags" value="Damaged Item" /><span>Damaged Item</span></label>
+        <label class="tag"><input type="checkbox" name="badTags" value="Inaccurate Photos" /><span>Inaccurate Photos</span></label>
+        <label class="tag"><input type="checkbox" name="badTags" value="Poor Packaging" /><span>Poor Packaging</span></label>
+        <label class="tag"><input type="checkbox" name="badTags" value="Not as Advertised" /><span>Not as Advertised</span></label>
+        <label class="tag"><input type="checkbox" name="badTags" value="Delayed Payment" /><span>Delayed Payment</span></label>
+        <label class="tag"><input type="checkbox" name="badTags" value="Hidden Issues" /><span>Hidden Issues</span></label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="section-title">Deal Type:</div>
+      <div class="deal-type-options">
+        <label class="deal-type-label"><input type="radio" name="dealType" value="Shipping" required /> Shipping</label>
+        <label class="deal-type-label"><input type="radio" name="dealType" value="In-Person" /> In-Person</label>
+      </div>
+    </div>
+
+    <button type="submit">Submit Review</button>
+  </form>
+
+  <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAy7isvF3tKX5e2C8UItBh_lo-o14y_zVE",
+    authDomain: "review-hut-bcff1.firebaseapp.com",
+    projectId: "review-hut-bcff1",
+    appId: "1:901708014175:web:6d6a22a703e94cd311b1ea"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const inviteID = urlParams.get("invite");
+  const reviewerIDTo = urlParams.get("to");
+
+  function getOrCreateBrowserID() {
+    const KEY = "reviewHutBrowserID";
+    let browserID = localStorage.getItem(KEY);
+    if (!browserID) {
+      browserID = crypto.randomUUID();
+      localStorage.setItem(KEY, browserID);
+    }
+    return browserID;
+  }
+
+  document.getElementById("review-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const stars = form.querySelector('input[name="stars"]:checked')?.value;
+
+    if (!stars || !inviteID || !reviewerIDTo) {
+      alert("Missing invite ID, reviewer ID, or star rating.");
+      return;
+    }
+
+    const goodTags = Array.from(form.querySelectorAll('input[name="goodTags"]:checked')).map(cb => cb.value);
+    const badTags = Array.from(form.querySelectorAll('input[name="badTags"]:checked')).map(cb => cb.value);
+
+    const dealType = form.querySelector('input[name="dealType"]:checked')?.value;
+    if (!dealType) {
+      alert("Please select a deal type.");
+      return;
+    }
+
+    const browserID = getOrCreateBrowserID();
+
+    const submitReview = firebase.app().functions().httpsCallable("submitAnonymousReview");
+
+    const payload = {
+      inviteID,
+      stars,
+      goodTags,
+      badTags,
+      reviewerIDTo,
+      dealType,
+      browserID
+    };
+
+    console.log("📤 Submitting payload:", payload);
+
+    try {
+      await submitReview(payload);
+      alert("Thanks! Your review was submitted.");
+      form.reset();
+    } catch (error) {
+      console.error("❌ Error from Firebase function:", error);
+      alert("Error submitting review: " + error.message);
+    }
+  });
+
+  function limitCheckboxes(name, limit) {
+    const checkboxes = document.querySelectorAll(`input[name="${name}"]`);
+    let alertShown = false;
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener("change", () => {
+        const checked = Array.from(checkboxes).filter(i => i.checked);
+
+        if (checked.length >= limit) {
+          checkboxes.forEach(i => {
+            if (!i.checked) i.disabled = true;
+          });
+          if (!alertShown) {
+            alert(`You can select up to ${limit} ${name === 'goodTags' ? 'positive' : 'negative'} tags.`);
+            alertShown = true;
+          }
+        } else {
+          checkboxes.forEach(i => i.disabled = false);
+          alertShown = false;
+        }
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    limitCheckboxes("goodTags", 8);
+    limitCheckboxes("badTags", 8);
+  });
+</script>
+</body>
+</html>
