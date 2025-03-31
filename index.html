@@ -245,6 +245,17 @@
     return browserID;
   }
 
+  function generateUserAgentFingerprint() {
+  const ua = navigator.userAgent;
+  const platform = navigator.platform;
+  const screenSize = `${screen.width}x${screen.height}-${screen.colorDepth}`;
+  const now = new Date();
+  const hourBucket = now.getUTCHours(); // for rough deduplication
+  const raw = `${ua}-${platform}-${screenSize}-${hourBucket}`;
+  return btoa(raw); // base64-encoded for readability
+}
+
+
   document.getElementById("review-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -267,6 +278,8 @@
 
     const browserID = getOrCreateBrowserID();
 
+    const userAgentFingerprint = generateUserAgentFingerprint();
+
     const submitReview = firebase.app().functions().httpsCallable("submitAnonymousReview");
 
     const payload = {
@@ -276,7 +289,8 @@
       badTags,
       reviewerIDTo,
       dealType,
-      browserID
+      browserID,
+      userAgentFingerpint
     };
 
     console.log("📤 Submitting payload:", payload);
